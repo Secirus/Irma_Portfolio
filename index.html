@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Irma Andersson — 3D Artist</title>
+<meta name="description" content="Portfolio of Irma Andersson, 3D artist working in modeling, look-dev, motion and real-time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <a href="#top" class="logo">IA<span>.</span></a>
+  <nav>
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#contact" class="pill">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <p class="mono eyebrow">3D Artist · Look-dev · Motion</p>
+    <h1>
+      <span class="line">Building worlds</span>
+      <span class="line grad">one vertex</span>
+      <span class="line">at a time.</span>
+    </h1>
+    <p class="lede">I'm Irma Andersson — I make botanical scenes and product visuals that feel close enough to touch.</p>
+    <div class="cta">
+      <a href="#work" class="btn primary">See the work</a>
+      <a href="#contact" class="btn ghost">Start a project</a>
+    </div>
+    <div class="scroll-hint mono"><span></span>scroll</div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track mono">
+      <span>Blender</span><span>✦</span><span>Houdini</span><span>✦</span><span>Cinema 4D</span><span>✦</span><span>ZBrush</span><span>✦</span><span>Substance</span><span>✦</span><span>Unreal Engine</span><span>✦</span><span>Octane</span><span>✦</span><span>Redshift</span><span>✦</span>
+      <span>Blender</span><span>✦</span><span>Houdini</span><span>✦</span><span>Cinema 4D</span><span>✦</span><span>ZBrush</span><span>✦</span><span>Substance</span><span>✦</span><span>Unreal Engine</span><span>✦</span><span>Octane</span><span>✦</span><span>Redshift</span><span>✦</span>
+    </div>
+  </div>
+
+  <section id="work" class="section">
+    <div class="section-head">
+      <p class="mono eyebrow">01 — Selected work</p>
+      <h2>Renders</h2>
+      <p class="section-note">Botanicals, product visuals and motion. Drag the sliders to compare colour grades, or click any piece to view it full size.</p>
+    </div>
+
+    <div class="gallery">
+      <div class="row">
+        <figure class="item compare" style="--ar:1.7778" data-title="Water Lilies">
+          <img src="renders/Portfolio/Waterlily_white_render_1K.png" alt="Two white water lilies with orange stamens floating among lily pads" loading="lazy" decoding="async">
+          <div class="after"><img src="renders/Portfolio/waterlillies_testRender_Black_White_Test.png" alt="" loading="lazy" decoding="async"></div>
+          <input type="range" min="0" max="100" value="50" aria-label="Compare colour and black-and-white render">
+          <span class="handle" aria-hidden="true"></span>
+          <span class="tag mono tag-l">Colour</span><span class="tag mono tag-r">Mono</span>
+          <figcaption><h3>Water Lilies</h3><p class="mono">Botanical · colour & mono</p></figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <figure class="item" style="--ar:1.7778">
+          <img src="renders/Portfolio/BubbleFlowerTestRender1.png" alt="Two pink flowers surrounded by iridescent soap bubbles in a forest" loading="lazy" decoding="async">
+          <figcaption><h3>Bubble Bloom</h3><p class="mono">Botanical</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:0.5874">
+          <img src="renders/Portfolio/SnowDropCrop2LensFlare.png" alt="Snowdrops with dew drops in soft spring light" loading="lazy" decoding="async">
+          <figcaption><h3>Snowdrops</h3><p class="mono">Botanical</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:0.7307">
+          <img src="renders/Portfolio/BlueRender_CloseUP.png" alt="A painterly blue tit perched on a golden branch" loading="lazy" decoding="async">
+          <figcaption><h3>Blue Tit</h3><p class="mono">Character · stylised</p></figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <figure class="item compare" style="--ar:1.7778" data-title="Miss Irma Parfum">
+          <img src="renders/Portfolio/Render2Edited3.png" alt="Red perfume bottle labelled Miss Irma resting on folded fabric in cool light" loading="lazy" decoding="async">
+          <div class="after"><img src="renders/Portfolio/Render2Edited2.png" alt="" loading="lazy" decoding="async"></div>
+          <input type="range" min="0" max="100" value="50" aria-label="Compare cool and warm colour grade">
+          <span class="handle" aria-hidden="true"></span>
+          <span class="tag mono tag-l">Cool</span><span class="tag mono tag-r">Warm</span>
+          <figcaption><h3>Miss Irma Parfum</h3><p class="mono">Product viz · two grades</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:0.5625">
+          <img src="renders/Portfolio/DrinkiUI-Mockup.png" alt="Illustrated app screen with a pink blob character peeking over a cartoon globe" loading="lazy" decoding="async">
+          <figcaption><h3>Drinki</h3><p class="mono">App UI illustration</p></figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <figure class="item" style="--ar:1.7778">
+          <img src="renders/Portfolio/Shampoo_Test_Render_1.png" alt="Pink translucent shampoo bottle with foam and floating bubbles" loading="lazy" decoding="async">
+          <figcaption><h3>Fruity Finish</h3><p class="mono">Product viz</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:1.0036">
+          <img src="renders/Portfolio/Shampoos.png" alt="Four colourways of the shampoo bottle in pink, green, orange and blue" loading="lazy" decoding="async">
+          <figcaption><h3>Fruity Finish — Colourways</h3><p class="mono">Product viz</p></figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <figure class="item video" style="--ar:1.7778">
+          <video src="renders/Portfolio/Fruit.mp4" muted loop playsinline preload="metadata"></video>
+          <figcaption><h3>Fruit</h3><p class="mono">Animation</p></figcaption>
+        </figure>
+        <figure class="item video" style="--ar:1.7778">
+          <video src="renders/Portfolio/SeptemberCropped.mp4" muted loop playsinline preload="metadata"></video>
+          <figcaption><h3>September</h3><p class="mono">Animation</p></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section about">
+    <div class="section-head">
+      <p class="mono eyebrow">02 — About</p>
+      <h2>Part sculptor,<br>part engineer.</h2>
+    </div>
+    <div class="about-body">
+      <p>I've spent the last eight years turning ideas into pixels — from hero product renders and stylised characters to procedural systems and real-time experiences. I care about light, material and motion, and about the tiny details that make something feel real (or beautifully unreal).</p>
+      <div class="stats">
+        <div><strong data-count="120">0</strong><span class="mono">projects shipped</span></div>
+        <div><strong data-count="40">0</strong><span class="mono">brands & studios</span></div>
+        <div><strong data-count="8">0</strong><span class="mono">years in 3D</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="section">
+    <div class="section-head">
+      <p class="mono eyebrow">03 — Services</p>
+      <h2>What I do</h2>
+    </div>
+    <div class="services">
+      <div class="service tilt"><span class="mono num">A</span><h3>Modeling & Sculpting</h3><p>Hard-surface, organic and stylised assets, production-ready topology.</p></div>
+      <div class="service tilt"><span class="mono num">B</span><h3>Look-dev & Lighting</h3><p>Materials, shaders and lighting that sell the shot.</p></div>
+      <div class="service tilt"><span class="mono num">C</span><h3>Motion & Simulation</h3><p>Animation, FX and procedural systems in Houdini & C4D.</p></div>
+      <div class="service tilt"><span class="mono num">D</span><h3>Real-time & Web 3D</h3><p>Unreal, WebGL and interactive experiences like this one.</p></div>
+    </div>
+  </section>
+
+  <section id="contact" class="section contact">
+    <p class="mono eyebrow">04 — Contact</p>
+    <h2 class="big">Let's make<br><span class="grad">something weird.</span></h2>
+    <a class="btn primary large" href="mailto:hello@example.com">hello@example.com</a>
+    <div class="socials mono">
+      <a href="#">ArtStation</a><a href="#">Instagram</a><a href="#">Behance</a><a href="#">LinkedIn</a>
+    </div>
+  </section>
+</main>
+
+<dialog class="lightbox" aria-label="Full-size view">
+  <button class="lb-close" aria-label="Close">×</button>
+  <button class="lb-nav lb-prev" aria-label="Previous">‹</button>
+  <div class="lb-stage"></div>
+  <button class="lb-nav lb-next" aria-label="Next">›</button>
+  <p class="lb-caption mono"></p>
+</dialog>
+
+<footer class="mono">© <span id="year"></span> Irma Andersson — rendered in real time with three.js</footer>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
