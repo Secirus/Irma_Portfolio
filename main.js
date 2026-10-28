@@ -133,14 +133,16 @@ const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
 
 // Pollen puffs: motes that rise off the pistil, drift up out of the cup and fade away.
 // They live in heroGroup so they follow the flower around, but not its spin.
-const ECOUNT = 100;
+const ECOUNT = 60;
+// Richer than the background field's tints, so the puffs read as fresh pollen
+const puffTints = [0xff7a1a, 0xf2452e, 0xffc21a, 0xff9f2e].map((c) => new THREE.Color(c));
 const ePos = new Float32Array(ECOUNT * 3);
 const eCol = new Float32Array(ECOUNT * 4); // rgba: alpha fades each mote in and out
 const eVel = new Float32Array(ECOUNT * 3);
 const eAge = new Float32Array(ECOUNT);
 const eLife = new Float32Array(ECOUNT);
 for (let i = 0; i < ECOUNT; i++) {
-  const c = tints[i % tints.length];
+  const c = puffTints[i % puffTints.length];
   eCol.set([c.r, c.g, c.b, 0], i * 4);
   eAge[i] = -Math.random() * 14; // staggered start so they don't all appear at once
 }
@@ -149,7 +151,7 @@ eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
 eGeo.setAttribute('color', new THREE.BufferAttribute(eCol, 4));
 const puffs = new THREE.Points(eGeo, new THREE.PointsMaterial({
   size: 0.1, map: particles.material.map, vertexColors: true,
-  transparent: true, depthWrite: false,
+  transparent: true, depthWrite: false, toneMapped: false, // skip ACES so the colours stay vivid
 }));
 puffs.frustumCulled = false;
 heroGroup.add(puffs);
