@@ -34,29 +34,26 @@ flower.scale.setScalar(0.001);
 heroGroup.add(flower);
 let bloom = 0.001; // target scale: grows to 1 once the model has loaded
 
-// Magnolia: blush at the heart of the bloom fading to cream at the petal tips
-new OBJLoader().load('renders/models/magnolia.obj', (obj) => {
+// Magnolia with Irma's baked colour + normal maps; textures load alongside the mesh
+const texLoader = new THREE.TextureLoader();
+const loadTex = (url, srgb) => texLoader.loadAsync(url).then((t) => {
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return t;
+});
+Promise.all([
+  new OBJLoader().loadAsync('renders/models/magnolia.obj'),
+  loadTex('renders/models/magnolia_color.png', true),
+  loadTex('renders/models/magnolia_normal.png', false),
+]).then(([obj, map, normalMap]) => {
   const box = new THREE.Box3().setFromObject(obj);
   const size = box.getSize(new THREE.Vector3());
-  const base = new THREE.Vector3((box.min.x + box.max.x) / 2, box.min.y, (box.min.z + box.max.z) / 2);
-  const reach = Math.max(size.x, size.y, size.z);
-  const heart = new THREE.Color(0xd99aa0), tip = new THREE.Color(0xfbf6ef);
-  const c = new THREE.Color(), p = new THREE.Vector3();
   const material = new THREE.MeshPhysicalMaterial({
-    vertexColors: true, roughness: 0.55, side: THREE.DoubleSide,
-    sheen: 1, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xf3d6d2),
+    map, normalMap, normalScale: new THREE.Vector2(0.6, 0.6),
+    roughness: 0.6, side: THREE.DoubleSide,
+    sheen: 0.6, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xf3d6d2),
   });
-  obj.traverse((m) => {
-    if (!m.isMesh) return;
-    const pos = m.geometry.attributes.position;
-    const col = new Float32Array(pos.count * 3);
-    for (let i = 0; i < pos.count; i++) {
-      const t = THREE.MathUtils.smoothstep(p.fromBufferAttribute(pos, i).distanceTo(base) / reach, 0.08, 0.55);
-      c.copy(heart).lerp(tip, t).toArray(col, i * 3);
-    }
-    m.geometry.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    m.material = material;
-  });
+  obj.traverse((m) => { if (m.isMesh) m.material = material; });
   const k = 3.2 / Math.max(size.x, size.z);
   obj.scale.setScalar(k);
   obj.position.copy(box.getCenter(new THREE.Vector3())).multiplyScalar(-k);
