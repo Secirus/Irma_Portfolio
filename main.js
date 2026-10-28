@@ -72,6 +72,24 @@ Promise.all([
   obj.position.copy(box.getCenter(new THREE.Vector3())).multiplyScalar(-k);
   flower.add(obj);
   bloom = 1;
+
+  // Pistil vertices in flower space: the pollen puffs below spawn from these
+  obj.updateMatrixWorld(true);
+  const pts = [];
+  obj.traverse((m) => {
+    if (!m.isMesh) return;
+    const pos = m.geometry.attributes.position;
+    const mats = [].concat(m.material);
+    const groups = m.geometry.groups.length ? m.geometry.groups : [{ start: 0, count: pos.count, materialIndex: 0 }];
+    const toFlower = new THREE.Matrix4().multiplyMatrices(obj.matrix, m.matrix);
+    for (const g of groups) {
+      if (mats[g.materialIndex] !== pistil) continue;
+      for (let i = g.start; i < g.start + g.count; i++) {
+        pts.push(new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(toFlower));
+      }
+    }
+  });
+  if (pts.length) emitFrom = pts;
 });
 
 // Fine orbit lines
@@ -112,6 +130,62 @@ const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
   size: 0.09, map: new THREE.CanvasTexture(dot), vertexColors: true,
   transparent: true, opacity: 0.75, depthWrite: false,
 }));
+
+// Pollen puffs: motes that rise off the pistil, drift up out of the cup and fade away.
+// They live in heroGroup so they follow the flower around, but not its spin.
+const ECOUNT = 360;
+const ePos = new Float32Array(ECOUNT * 3);
+const eCol = new Float32Array(ECOUNT * 4); // rgba: alpha fades each mote in and out
+const eVel = new Float32Array(ECOUNT * 3);
+const eAge = new Float32Array(ECOUNT);
+const eLife = new Float32Array(ECOUNT);
+for (let i = 0; i < ECOUNT; i++) {
+  const c = tints[i % tints.length];
+  eCol.set([c.r, c.g, c.b, 0], i * 4);
+  eAge[i] = -Math.random() * 7; // staggered start so they don't all appear at once
+}
+const eGeo = new THREE.BufferGeometry();
+eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
+eGeo.setAttribute('color', new THREE.BufferAttribute(eCol, 4));
+const puffs = new THREE.Points(eGeo, new THREE.PointsMaterial({
+  size: 0.1, map: particles.material.map, vertexColors: true,
+  transparent: true, depthWrite: false,
+}));
+puffs.frustumCulled = false;
+heroGroup.add(puffs);
+
+let emitFrom = null; // set once the model has loaded
+const up = new THREE.Vector3();
+const spot = new THREE.Vector3();
+function updatePuffs(dt, t) {
+  flower.updateMatrix();
+  up.set(0, 1, 0).applyQuaternion(flower.quaternion);
+  for (let i = 0; i < ECOUNT; i++) {
+    eAge[i] += dt;
+    if (eAge[i] < 0) continue;
+    if (eAge[i] >= eLife[i]) {
+      if (!emitFrom) { eAge[i] = -Math.random() * 2; continue; }
+      spot.copy(emitFrom[(Math.random() * emitFrom.length) | 0]).applyMatrix4(flower.matrix);
+      spot.toArray(ePos, i * 3);
+      const s = 0.3 + Math.random() * 0.35;
+      eVel[i * 3] = up.x * s + (Math.random() - 0.5) * 0.4;
+      eVel[i * 3 + 1] = up.y * s + (Math.random() - 0.5) * 0.4;
+      eVel[i * 3 + 2] = up.z * s + (Math.random() - 0.5) * 0.4;
+      eAge[i] = 0;
+      eLife[i] = 4 + Math.random() * 4;
+    }
+    const drag = 1 - 0.1 * dt;
+    const sway = Math.sin(t * 0.7 + i) * 0.03 * dt;
+    for (let a = 0; a < 3; a++) {
+      eVel[i * 3 + a] *= drag;
+      ePos[i * 3 + a] += eVel[i * 3 + a] * dt + (a === 0 ? sway : 0);
+    }
+    const p = eAge[i] / eLife[i];
+    eCol[i * 4 + 3] = Math.min(p / 0.1, 1) * (1 - p) ** 1.5 * 0.85;
+  }
+  eGeo.attributes.position.needsUpdate = true;
+  eGeo.attributes.color.needsUpdate = true;
+}
 
 heroScene.add(heroGroup, particles);
 
@@ -278,9 +352,12 @@ resize();
 
 const clock = new THREE.Clock();
 const motion = reduceMotion ? 0.15 : 1;
+let lastT = 0;
 
 function frame() {
   const t = clock.getElapsedTime() * motion;
+  const dt = Math.min(t - lastT, 0.05); // clamp so a backgrounded tab doesn't fling the puffs
+  lastT = t;
   const w = innerWidth, h = innerHeight;
   const scroll = scrollY / h;
 
@@ -301,6 +378,7 @@ function frame() {
   particles.rotation.y = t * 0.012 + scroll * 0.15;
   particles.position.y = Math.sin(t * 0.15) * 0.3 + scroll * 0.4;
   particles.rotation.x = scroll * 0.1;
+  updatePuffs(dt, t);
   heroCam.position.x = mouseSmooth.x * 0.4;
   heroCam.position.y = mouseSmooth.y * 0.3;
   heroCam.lookAt(0, 0, 0);
