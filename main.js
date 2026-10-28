@@ -37,7 +37,7 @@ let bloom = 0.001; // target scale: grows to 1 once the model has loaded
 // Tulip with Irma's petal + pistil textures; the OBJ's two materials ("Petal._Yellow", "Pistill")
 // each get their own colour + normal map. Textures load alongside the mesh.
 // Bump MODEL_V whenever a file in renders/models changes, so browsers skip their cached copy.
-const MODEL_V = 5;
+const MODEL_V = 6;
 const texLoader = new THREE.TextureLoader();
 const loadTex = (url, srgb) => texLoader.loadAsync(url).then((t) => {
   if (srgb) t.colorSpace = THREE.SRGBColorSpace;
