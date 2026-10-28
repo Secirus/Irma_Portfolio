@@ -240,7 +240,7 @@ document.querySelectorAll('.tilt').forEach((el) => {
   el.addEventListener('pointerleave', () => (el.style.transform = ''));
 });
 
-document.querySelectorAll('.section-head, .row, .service, .about-body, .contact > *').forEach((el) => el.classList.add('reveal'));
+document.querySelectorAll('.section-head, .row, .more, .service, .about-body, .contact > *').forEach((el) => el.classList.add('reveal'));
 const io = new IntersectionObserver((entries) => {
   for (const e of entries) {
     if (!e.isIntersecting) continue;

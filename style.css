@@ -202,9 +202,15 @@ footer { text-align: center; padding: 36px 16px; color: var(--muted); border-top
 
 @media (max-width: 800px) {
   .about { grid-template-columns: 1fr; gap: 40px; }
-  .nav nav a:not(.pill) { display: none; }
+  .nav nav a:not(.pill):not(.keep) { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
   h1 .line { opacity: 1; transform: none; }
 }
+
+/* Portfolio page */
+.page-top { padding-top: clamp(140px, 16vw, 200px); }
+.page-title { font-size: clamp(2.4rem, 5.5vw, 4.4rem); letter-spacing: -0.01em; line-height: 1.05; }
+.more { margin-top: 48px; text-align: center; }
+.nav nav a[aria-current="page"] { color: var(--fg); }

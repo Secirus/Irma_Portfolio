@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio — Irma Andersson</title>
+<meta name="description" content="Portfolio of Irma Andersson, 3D artist creating elegant, otherworldly botanical and beauty renders.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <a href="index.html" class="logo">IA<span>.</span></a>
+  <nav>
+    <a href="portfolio.html" class="keep" aria-current="page">Portfolio</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#contact" class="pill">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="section page-top">
+    <div class="section-head">
+      <p class="mono eyebrow">Portfolio</p>
+      <h1 class="page-title">All work</h1>
+      <p class="section-note">Botanicals, beauty pieces and gentle motion. Drag the slider to compare colour grades, or click any piece to see it full size.</p>
+    </div>
+
+    <div class="gallery">
+      <div class="row">
+        <figure class="item" style="--ar:1.7778">
+          <img src="renders/Portfolio/BubbleFlowerTestRender1.png" alt="Two pink flowers surrounded by iridescent soap bubbles in a forest" loading="lazy" decoding="async">
+          <figcaption><h3>Bubble Bloom</h3><p class="mono">Botanical</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:0.5874">
+          <img src="renders/Portfolio/SnowDropCrop2LensFlare.png" alt="Snowdrops with dew drops in soft spring light" loading="lazy" decoding="async">
+          <figcaption><h3>Snowdrops</h3><p class="mono">Botanical</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:0.7307">
+          <img src="renders/Portfolio/BlueRender_CloseUP.png" alt="A painterly blue tit perched on a golden branch" loading="lazy" decoding="async">
+          <figcaption><h3>Blue Tit</h3><p class="mono">Character · stylised</p></figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <figure class="item compare" style="--ar:1.7778" data-title="Miss Irma Parfum">
+          <img src="renders/Portfolio/Render2Edited3.png" alt="Red perfume bottle labelled Miss Irma resting on folded fabric in cool light" loading="lazy" decoding="async">
+          <div class="after"><img src="renders/Portfolio/Render2Edited2.png" alt="" loading="lazy" decoding="async"></div>
+          <input type="range" min="0" max="100" value="50" aria-label="Compare cool and warm colour grade">
+          <span class="handle" aria-hidden="true"></span>
+          <span class="tag mono tag-l">Cool</span><span class="tag mono tag-r">Warm</span>
+          <figcaption><h3>Miss Irma Parfum</h3><p class="mono">Product viz · two grades</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:0.5625">
+          <img src="renders/Portfolio/DrinkiUI-Mockup.png" alt="Illustrated app screen with a pink blob character peeking over a cartoon globe" loading="lazy" decoding="async">
+          <figcaption><h3>Drinki</h3><p class="mono">App UI illustration</p></figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <figure class="item" style="--ar:1.7778">
+          <img src="renders/Portfolio/Shampoo_Test_Render_1.png" alt="Pink translucent shampoo bottle with foam and floating bubbles" loading="lazy" decoding="async">
+          <figcaption><h3>Fruity Finish</h3><p class="mono">Product viz</p></figcaption>
+        </figure>
+        <figure class="item" style="--ar:1.0036">
+          <img src="renders/Portfolio/Shampoos.png" alt="Four colourways of the shampoo bottle in pink, green, orange and blue" loading="lazy" decoding="async">
+          <figcaption><h3>Fruity Finish — Colourways</h3><p class="mono">Product viz</p></figcaption>
+        </figure>
+      </div>
+
+      <div class="row">
+        <figure class="item video" style="--ar:1.7778">
+          <video src="renders/Portfolio/Fruit.mp4" muted loop playsinline preload="metadata"></video>
+          <figcaption><h3>Fruit</h3><p class="mono">Animation</p></figcaption>
+        </figure>
+        <figure class="item video" style="--ar:1.7778">
+          <video src="renders/Portfolio/SeptemberCropped.mp4" muted loop playsinline preload="metadata"></video>
+          <figcaption><h3>September</h3><p class="mono">Animation</p></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="more">
+      <a href="index.html#contact" class="btn primary">Start a project</a>
+    </div>
+  </section>
+</main>
+
+<dialog class="lightbox" aria-label="Full-size view">
+  <button class="lb-close" aria-label="Close">×</button>
+  <button class="lb-nav lb-prev" aria-label="Previous">‹</button>
+  <div class="lb-stage"></div>
+  <button class="lb-nav lb-next" aria-label="Next">›</button>
+  <p class="lb-caption mono"></p>
+</dialog>
+
+<footer class="mono">© <span id="year"></span> Irma Andersson · Botanical &amp; beauty 3D</footer>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
