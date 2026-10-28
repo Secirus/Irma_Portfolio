@@ -14,7 +14,7 @@ addEventListener('pointermove', (e) => {
   mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
 });
 
-// ---------- Hero: magnolia model + drifting pollen ----------
+// ---------- Hero: tulip model + drifting pollen ----------
 
 const heroScene = new THREE.Scene();
 heroScene.fog = new THREE.FogExp2(0xf6f4ee, 0.07);
@@ -34,29 +34,40 @@ flower.scale.setScalar(0.001);
 heroGroup.add(flower);
 let bloom = 0.001; // target scale: grows to 1 once the model has loaded
 
-// Magnolia with Irma's baked colour + normal maps; textures load alongside the mesh.
+// Tulip with Irma's petal + pistil textures; the OBJ's two materials ("Petal._Yellow", "Pistill")
+// each get their own colour + normal map. Textures load alongside the mesh.
 // Bump MODEL_V whenever a file in renders/models changes, so browsers skip their cached copy.
-const MODEL_V = 2;
+const MODEL_V = 3;
 const texLoader = new THREE.TextureLoader();
 const loadTex = (url, srgb) => texLoader.loadAsync(url).then((t) => {
   if (srgb) t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = renderer.capabilities.getMaxAnisotropy();
   return t;
 });
+const M = 'renders/models';
 Promise.all([
-  new OBJLoader().loadAsync(`renders/models/magnolia.obj?v=${MODEL_V}`),
-  loadTex(`renders/models/magnolia_color.png?v=${MODEL_V}`, true),
-  loadTex(`renders/models/magnolia_normal.png?v=${MODEL_V}`, false),
-]).then(([obj, map, normalMap]) => {
+  new OBJLoader().loadAsync(`${M}/tulip.obj?v=${MODEL_V}`),
+  loadTex(`${M}/Tulip_Petal_Diffuse.png?v=${MODEL_V}`, true),
+  loadTex(`${M}/Tulip_Petal_Normal.png?v=${MODEL_V}`, false),
+  loadTex(`${M}/Pistill_Diffuse.png?v=${MODEL_V}`, true),
+  loadTex(`${M}/Pistill_Normals.png?v=${MODEL_V}`, false),
+]).then(([obj, petalMap, petalNormal, pistilMap, pistilNormal]) => {
   const box = new THREE.Box3().setFromObject(obj);
   const size = box.getSize(new THREE.Vector3());
-  const material = new THREE.MeshPhysicalMaterial({
-    map, normalMap, normalScale: new THREE.Vector2(0.3, 0.3),
+  const petal = new THREE.MeshPhysicalMaterial({
+    map: petalMap, normalMap: petalNormal, normalScale: new THREE.Vector2(0.3, 0.3),
     roughness: 0.6, side: THREE.DoubleSide,
-    sheen: 0.6, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xf3d6d2),
+    sheen: 0.6, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xf6e7c4),
   });
-  obj.traverse((m) => { if (m.isMesh) m.material = material; });
-  const k = 3.2 / Math.max(size.x, size.z);
+  const pistil = new THREE.MeshStandardMaterial({
+    map: pistilMap, normalMap: pistilNormal, normalScale: new THREE.Vector2(0.5, 0.5),
+    roughness: 0.7, side: THREE.DoubleSide,
+  });
+  const pick = (m) => (m.name === 'Pistill' ? pistil : petal);
+  obj.traverse((m) => {
+    if (m.isMesh) m.material = Array.isArray(m.material) ? m.material.map(pick) : pick(m.material);
+  });
+  const k = 3.2 / Math.max(size.x, size.y, size.z);
   obj.scale.setScalar(k);
   obj.position.copy(box.getCenter(new THREE.Vector3())).multiplyScalar(-k);
   flower.add(obj);
