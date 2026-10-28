@@ -61,8 +61,10 @@
       <p class="section-note">Drag the slider to compare the colour and mono versions, then browse the rest of the work in the portfolio.</p>
     </div>
 
-    <div class="gallery">
-      <div class="row">
+    <div class="carousel" aria-roledescription="carousel" aria-label="Featured renders">
+      <button class="car-nav car-prev" aria-label="Previous picture">‹</button>
+      <div class="car-window">
+        <div class="car-track">
         <figure class="item compare" style="--ar:1.7778" data-title="Water Lilies">
           <img src="renders/Portfolio/Waterlily_white_render_1K.png" alt="Two white water lilies with orange stamens floating among lily pads" loading="lazy" decoding="async">
           <div class="after"><img src="renders/Portfolio/waterlillies_testRender_Black_White_Test.png" alt="" loading="lazy" decoding="async"></div>
@@ -71,8 +73,27 @@
           <span class="tag mono tag-l">Colour</span><span class="tag mono tag-r">Mono</span>
           <figcaption><h3>Water Lilies</h3><p class="mono">Botanical · colour & mono</p></figcaption>
         </figure>
+          <!-- Placeholder slides: swap in other before/after pairs -->
+        <figure class="item compare" style="--ar:1.7778" data-title="Water Lilies">
+          <img src="renders/Portfolio/Waterlily_white_render_1K.png" alt="Two white water lilies with orange stamens floating among lily pads" loading="lazy" decoding="async">
+          <div class="after"><img src="renders/Portfolio/waterlillies_testRender_Black_White_Test.png" alt="" loading="lazy" decoding="async"></div>
+          <input type="range" min="0" max="100" value="50" aria-label="Compare colour and black-and-white render">
+          <span class="handle" aria-hidden="true"></span>
+          <span class="tag mono tag-l">Colour</span><span class="tag mono tag-r">Mono</span>
+          <figcaption><h3>Water Lilies</h3><p class="mono">Botanical · colour & mono</p></figcaption>
+        </figure>
+        <figure class="item compare" style="--ar:1.7778" data-title="Water Lilies">
+          <img src="renders/Portfolio/Waterlily_white_render_1K.png" alt="Two white water lilies with orange stamens floating among lily pads" loading="lazy" decoding="async">
+          <div class="after"><img src="renders/Portfolio/waterlillies_testRender_Black_White_Test.png" alt="" loading="lazy" decoding="async"></div>
+          <input type="range" min="0" max="100" value="50" aria-label="Compare colour and black-and-white render">
+          <span class="handle" aria-hidden="true"></span>
+          <span class="tag mono tag-l">Colour</span><span class="tag mono tag-r">Mono</span>
+          <figcaption><h3>Water Lilies</h3><p class="mono">Botanical · colour & mono</p></figcaption>
+        </figure>
+        </div>
       </div>
-
+      <button class="car-nav car-next" aria-label="Next picture">›</button>
+      <p class="car-count mono" aria-live="polite"></p>
     </div>
     <div class="more">
       <a href="portfolio.html" class="btn ghost">View the full portfolio →</a>

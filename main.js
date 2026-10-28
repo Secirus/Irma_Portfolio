@@ -172,6 +172,22 @@ document.querySelectorAll('.compare').forEach((el) => {
   hint.observe(el);
 });
 
+document.querySelectorAll('.carousel').forEach((car) => {
+  const track = car.querySelector('.car-track');
+  const slides = [...track.children];
+  const count = car.querySelector('.car-count');
+  let i = 0;
+  const go = (n) => {
+    i = (n + slides.length) % slides.length;
+    track.style.setProperty('--i', i);
+    slides.forEach((s, k) => (s.inert = k !== i)); // keep hidden slides out of the tab order
+    count.textContent = `${i + 1} / ${slides.length}`;
+  };
+  car.querySelector('.car-prev').addEventListener('click', () => go(i - 1));
+  car.querySelector('.car-next').addEventListener('click', () => go(i + 1));
+  go(0);
+});
+
 const vio = new IntersectionObserver((entries) => {
   for (const e of entries) {
     if (e.isIntersecting && !reduceMotion) e.target.play().catch(() => {});
