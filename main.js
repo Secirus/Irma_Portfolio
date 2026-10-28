@@ -35,9 +35,9 @@ heroGroup.add(flower);
 let bloom = 0.001; // target scale: grows to 1 once the model has loaded
 
 // Tulip with Irma's petal + pistil textures; the OBJ's two materials ("Petal._Yellow", "Pistill")
-// each get their own colour map (+ normal map on the petals). Textures load alongside the mesh.
+// each get their own colour + normal map. Textures load alongside the mesh.
 // Bump MODEL_V whenever a file in renders/models changes, so browsers skip their cached copy.
-const MODEL_V = 4;
+const MODEL_V = 5;
 const texLoader = new THREE.TextureLoader();
 const loadTex = (url, srgb) => texLoader.loadAsync(url).then((t) => {
   if (srgb) t.colorSpace = THREE.SRGBColorSpace;
@@ -50,7 +50,8 @@ Promise.all([
   loadTex(`${M}/Tulip_Petal_Diffuse.png?v=${MODEL_V}`, true),
   loadTex(`${M}/Tulip_Petal_Normal.png?v=${MODEL_V}`, false),
   loadTex(`${M}/Pistill_Diffuse.png?v=${MODEL_V}`, true),
-]).then(([obj, petalMap, petalNormal, pistilMap]) => {
+  loadTex(`${M}/Pistill_Normals.png?v=${MODEL_V}`, false),
+]).then(([obj, petalMap, petalNormal, pistilMap, pistilNormal]) => {
   const box = new THREE.Box3().setFromObject(obj);
   const size = box.getSize(new THREE.Vector3());
   const petal = new THREE.MeshPhysicalMaterial({
@@ -58,9 +59,9 @@ Promise.all([
     roughness: 0.6, side: THREE.DoubleSide,
     sheen: 0.6, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xf6e7c4),
   });
-  // No pistil normal map for now: Pistill_Normals.png was baked for the old UV layout.
   const pistil = new THREE.MeshStandardMaterial({
-    map: pistilMap, roughness: 0.7, side: THREE.DoubleSide,
+    map: pistilMap, normalMap: pistilNormal, normalScale: new THREE.Vector2(0.5, 0.5),
+    roughness: 0.7, side: THREE.DoubleSide,
   });
   const pick = (m) => (m.name === 'Pistill' ? pistil : petal);
   obj.traverse((m) => {
