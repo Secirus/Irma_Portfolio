@@ -164,7 +164,7 @@ document.querySelectorAll('.compare').forEach((el) => {
     const step = (now) => {
       const p = Math.min((now - start) / 1600, 1);
       if (+input.value !== 50 && p > 0) return; // user grabbed it
-      set(50 + Math.sin(p * Math.PI * 2) * 22 * (1 - p));
+      set(50 + Math.sin(p * Math.PI * 2) * 10 * (1 - p));
       if (p < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);

@@ -223,7 +223,7 @@ footer { text-align: center; padding: 36px 16px; color: var(--muted); border-top
 .car-nav {
   width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); cursor: pointer;
   background: rgba(255,255,255,.55); backdrop-filter: blur(8px); color: var(--fg);
-  font-family: var(--serif); font-size: 1.8rem; line-height: 1; display: grid; place-items: center;
+  font-family: var(--serif); font-size: 2.5rem; line-height: 1; padding-bottom: 4px; display: grid; place-items: center;
   transition: background .3s, transform .4s var(--ease);
 }
 .car-nav:hover { background: #fff; transform: scale(1.06); }
