@@ -49,7 +49,7 @@ Promise.all([
   const box = new THREE.Box3().setFromObject(obj);
   const size = box.getSize(new THREE.Vector3());
   const material = new THREE.MeshPhysicalMaterial({
-    map, normalMap, normalScale: new THREE.Vector2(0.6, 0.6),
+    map, normalMap, normalScale: new THREE.Vector2(0.3, 0.3),
     roughness: 0.6, side: THREE.DoubleSide,
     sheen: 0.6, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xf3d6d2),
   });
