@@ -133,7 +133,7 @@ const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
 
 // Pollen puffs: motes that rise off the pistil, drift up out of the cup and fade away.
 // They live in heroGroup so they follow the flower around, but not its spin.
-const ECOUNT = 180;
+const ECOUNT = 100;
 const ePos = new Float32Array(ECOUNT * 3);
 const eCol = new Float32Array(ECOUNT * 4); // rgba: alpha fades each mote in and out
 const eVel = new Float32Array(ECOUNT * 3);
@@ -142,7 +142,7 @@ const eLife = new Float32Array(ECOUNT);
 for (let i = 0; i < ECOUNT; i++) {
   const c = tints[i % tints.length];
   eCol.set([c.r, c.g, c.b, 0], i * 4);
-  eAge[i] = -Math.random() * 10; // staggered start so they don't all appear at once
+  eAge[i] = -Math.random() * 14; // staggered start so they don't all appear at once
 }
 const eGeo = new THREE.BufferGeometry();
 eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
@@ -167,12 +167,12 @@ function updatePuffs(dt, t) {
       if (!emitFrom) { eAge[i] = -Math.random() * 2; continue; }
       spot.copy(emitFrom[(Math.random() * emitFrom.length) | 0]).applyMatrix4(flower.matrix);
       spot.toArray(ePos, i * 3);
-      const s = 0.15 + Math.random() * 0.2;
-      eVel[i * 3] = up.x * s + (Math.random() - 0.5) * 0.25;
-      eVel[i * 3 + 1] = up.y * s + (Math.random() - 0.5) * 0.25;
-      eVel[i * 3 + 2] = up.z * s + (Math.random() - 0.5) * 0.25;
+      const s = 0.08 + Math.random() * 0.12;
+      eVel[i * 3] = up.x * s + (Math.random() - 0.5) * 0.15;
+      eVel[i * 3 + 1] = up.y * s + (Math.random() - 0.5) * 0.15;
+      eVel[i * 3 + 2] = up.z * s + (Math.random() - 0.5) * 0.15;
       eAge[i] = 0;
-      eLife[i] = 6 + Math.random() * 4;
+      eLife[i] = 8 + Math.random() * 5;
     }
     const drag = 1 - 0.1 * dt;
     const sway = Math.sin(t * 0.7 + i) * 0.03 * dt;
@@ -181,7 +181,7 @@ function updatePuffs(dt, t) {
       ePos[i * 3 + a] += eVel[i * 3 + a] * dt + (a === 0 ? sway : 0);
     }
     const p = eAge[i] / eLife[i];
-    eCol[i * 4 + 3] = Math.min(p / 0.1, 1) * (1 - p) ** 1.5 * 0.85;
+    eCol[i * 4 + 3] = Math.min(p / 0.1, 1) * (1 - p) ** 1.5 * 0.7;
   }
   eGeo.attributes.position.needsUpdate = true;
   eGeo.attributes.color.needsUpdate = true;
