@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canvas = document.getElementById('gl');
@@ -13,80 +14,55 @@ addEventListener('pointermove', (e) => {
   mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
 });
 
-// ---------- Hero: noise-displaced pearl blob + drifting pollen ----------
-
-// Ashima simplex noise (MIT)
-const noiseGLSL = /* glsl */`
-vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
-vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
-vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);}
-vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-.85373472095314*r;}
-float snoise(vec3 v){
-  const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);
-  vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);
-  vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
-  vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;
-  i=mod289(i);
-  vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
-  float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;
-  vec4 j=p-49.*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);
-  vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);
-  vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
-  vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));
-  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
-  vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
-  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
-  p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
-  vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;
-  return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
-}`;
+// ---------- Hero: magnolia model + drifting pollen ----------
 
 const heroScene = new THREE.Scene();
 heroScene.fog = new THREE.FogExp2(0xf6f4ee, 0.07);
 const heroCam = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
 heroCam.position.set(0, 0, 6);
 
-const blobUniforms = { uTime: { value: 0 }, uIntensity: { value: 0.22 } };
-const blob = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(1.4, 128),
-  new THREE.ShaderMaterial({
-    uniforms: blobUniforms,
-    vertexShader: /* glsl */`
-      uniform float uTime; uniform float uIntensity;
-      varying float vDisp; varying vec3 vNormal; varying vec3 vView;
-      ${noiseGLSL}
-      void main(){
-        float n = snoise(position * 1.0 + uTime * 0.12);
-        n += 0.35 * snoise(position * 2.2 - uTime * 0.18);
-        vDisp = n;
-        vec3 p = position + normal * n * uIntensity;
-        vec4 mv = modelViewMatrix * vec4(p, 1.0);
-        vNormal = normalize(normalMatrix * normal);
-        vView = -mv.xyz;
-        gl_Position = projectionMatrix * mv;
-      }`,
-    fragmentShader: /* glsl */`
-      uniform float uTime;
-      varying float vDisp; varying vec3 vNormal; varying vec3 vView;
-      void main(){
-        vec3 n = normalize(vNormal);
-        float fres = pow(1.0 - max(dot(n, normalize(vView)), 0.0), 2.0);
-        vec3 sage = vec3(.66, .75, .64), cream = vec3(.98, .96, .92);
-        vec3 blush = vec3(.94, .82, .78), sky = vec3(.82, .89, .90);
-        float t = vDisp * 0.5 + 0.5 + sin(uTime * 0.2) * 0.08;
-        vec3 col = mix(sage, cream, smoothstep(0.05, 0.75, t));
-        col = mix(col, blush, smoothstep(0.6, 1.0, t) * 0.7);
-        col = mix(col, sky, fres * 0.55);
-        float light = dot(n, normalize(vec3(-0.4, 0.8, 0.6))) * 0.5 + 0.5;
-        col *= 0.86 + 0.14 * light;
-        col += fres * 0.18;
-        gl_FragColor = vec4(min(col, 1.0), 1.0);
-      }`,
-  })
-);
+const sun = new THREE.DirectionalLight(0xfff4e8, 2.2);
+sun.position.set(-3, 5, 4);
+const rim = new THREE.DirectionalLight(0xdbe8ea, 1.2);
+rim.position.set(4, 1, -3);
+heroScene.add(new THREE.HemisphereLight(0xfffaf2, 0xb7c4b4, 1.6), sun, rim);
 
 const heroGroup = new THREE.Group();
-heroGroup.add(blob);
+const flower = new THREE.Group(); // tilted toward the camera, spun on its stem in the render loop
+flower.rotation.x = 0.45;
+flower.scale.setScalar(0.001);
+heroGroup.add(flower);
+let bloom = 0.001; // target scale: grows to 1 once the model has loaded
+
+// Magnolia: blush at the heart of the bloom fading to cream at the petal tips
+new OBJLoader().load('renders/models/magnolia.obj', (obj) => {
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3());
+  const base = new THREE.Vector3((box.min.x + box.max.x) / 2, box.min.y, (box.min.z + box.max.z) / 2);
+  const reach = Math.max(size.x, size.y, size.z);
+  const heart = new THREE.Color(0xd99aa0), tip = new THREE.Color(0xfbf6ef);
+  const c = new THREE.Color(), p = new THREE.Vector3();
+  const material = new THREE.MeshPhysicalMaterial({
+    vertexColors: true, roughness: 0.55, side: THREE.DoubleSide,
+    sheen: 1, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xf3d6d2),
+  });
+  obj.traverse((m) => {
+    if (!m.isMesh) return;
+    const pos = m.geometry.attributes.position;
+    const col = new Float32Array(pos.count * 3);
+    for (let i = 0; i < pos.count; i++) {
+      const t = THREE.MathUtils.smoothstep(p.fromBufferAttribute(pos, i).distanceTo(base) / reach, 0.08, 0.55);
+      c.copy(heart).lerp(tip, t).toArray(col, i * 3);
+    }
+    m.geometry.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    m.material = material;
+  });
+  const k = 3.2 / Math.max(size.x, size.z);
+  obj.scale.setScalar(k);
+  obj.position.copy(box.getCenter(new THREE.Vector3())).multiplyScalar(-k);
+  flower.add(obj);
+  bloom = 1;
+});
 
 // Fine orbit lines
 const ringMat = new THREE.MeshBasicMaterial({ color: 0x7f9a80, transparent: true, opacity: 0.35 });
@@ -300,14 +276,15 @@ function frame() {
 
   mouseSmooth.lerp(mouse, 0.05);
 
-  // Hero animation: blob drifts right and recedes as you scroll
-  blobUniforms.uTime.value = t;
-  blobUniforms.uIntensity.value = 0.2 + Math.min(scroll, 1) * 0.12 + Math.abs(mouseSmooth.x) * 0.05;
+  // Hero animation: flower drifts right and recedes as you scroll
   const wide = w > 800;
   heroGroup.position.x = THREE.MathUtils.lerp(wide ? 1.8 : 0, wide ? 2.6 : 0, Math.min(scroll, 1));
-  heroGroup.position.y = (wide ? 0 : -1.2) + scroll * 0.8 + Math.sin(t * 0.5) * 0.06;
+  heroGroup.position.y = (wide ? 0 : -1.9) + scroll * 0.8 + Math.sin(t * 0.5) * 0.06;
+  heroGroup.scale.setScalar(wide ? 1 : 0.6);
   heroGroup.position.z = -Math.min(scroll, 3) * 1.2;
-  heroGroup.rotation.y = t * 0.08 + mouseSmooth.x * 0.3 + scroll * 1.0;
+  heroGroup.rotation.y = mouseSmooth.x * 0.3 + scroll * 0.4;
+  flower.rotation.y = t * 0.1;
+  flower.scale.setScalar(THREE.MathUtils.lerp(flower.scale.x, bloom, 0.03));
   heroGroup.rotation.x = -mouseSmooth.y * 0.2;
   rings[0].rotation.z = t * 0.12;
   rings[1].rotation.z = -t * 0.08;
