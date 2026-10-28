@@ -218,7 +218,7 @@ footer { text-align: center; padding: 36px 16px; color: var(--muted); border-top
 /* Featured carousel — one slide visible, arrows either side */
 .carousel { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
 .car-window { overflow: hidden; border-radius: 6px; min-width: 0; }
-.car-track { display: flex; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .9s var(--ease); }
+.car-track { display: flex; transform: translateX(calc(var(--i, 0) * -100%)); transition: transform .5s ease; }
 .car-track .item { flex: 0 0 100%; }
 .car-nav {
   width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); cursor: pointer;
