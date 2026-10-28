@@ -141,6 +141,7 @@ const eCol = new Float32Array(ECOUNT * 4); // rgba: alpha fades each mote in and
 const eVel = new Float32Array(ECOUNT * 3);
 const eAge = new Float32Array(ECOUNT);
 const eLife = new Float32Array(ECOUNT);
+const eSize = new Float32Array(ECOUNT).fill(1); // per-mote size multiplier, re-rolled on each spawn
 for (let i = 0; i < ECOUNT; i++) {
   const c = puffTints[i % puffTints.length];
   eCol.set([c.r, c.g, c.b, 0], i * 4);
@@ -149,6 +150,7 @@ for (let i = 0; i < ECOUNT; i++) {
 const eGeo = new THREE.BufferGeometry();
 eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
 eGeo.setAttribute('color', new THREE.BufferAttribute(eCol, 4));
+eGeo.setAttribute('pSize', new THREE.BufferAttribute(eSize, 1));
 // Solid-cored dot: the soft background dot is mostly translucent, which turned these near-white
 const core = document.createElement('canvas');
 core.width = core.height = 64;
@@ -164,6 +166,12 @@ const puffs = new THREE.Points(eGeo, new THREE.PointsMaterial({
   transparent: true, depthWrite: false,
   toneMapped: false, fog: false, // skip ACES and the cream haze so the colours stay vivid
 }));
+// PointsMaterial has one size for every point; scale it per mote with the pSize attribute
+puffs.material.onBeforeCompile = (shader) => {
+  shader.vertexShader = shader.vertexShader
+    .replace('uniform float size;', 'uniform float size;\nattribute float pSize;')
+    .replace('gl_PointSize = size;', 'gl_PointSize = size * pSize;');
+};
 puffs.frustumCulled = false;
 heroGroup.add(puffs);
 
@@ -186,6 +194,7 @@ function updatePuffs(dt, t) {
       eVel[i * 3 + 2] = up.z * s + (Math.random() - 0.5) * 0.15;
       eAge[i] = 0;
       eLife[i] = 8 + Math.random() * 5;
+      eSize[i] = 0.35 + Math.random() ** 2 * 2.15; // mostly fine specks, the odd big grain
     }
     const drag = 1 - 0.1 * dt;
     const sway = Math.sin(t * 0.7 + i) * 0.03 * dt;
@@ -198,6 +207,7 @@ function updatePuffs(dt, t) {
   }
   eGeo.attributes.position.needsUpdate = true;
   eGeo.attributes.color.needsUpdate = true;
+  eGeo.attributes.pSize.needsUpdate = true;
 }
 
 heroScene.add(heroGroup, particles);
