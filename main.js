@@ -149,9 +149,20 @@ for (let i = 0; i < ECOUNT; i++) {
 const eGeo = new THREE.BufferGeometry();
 eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
 eGeo.setAttribute('color', new THREE.BufferAttribute(eCol, 4));
+// Solid-cored dot: the soft background dot is mostly translucent, which turned these near-white
+const core = document.createElement('canvas');
+core.width = core.height = 64;
+const cctx = core.getContext('2d');
+const cg = cctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+cg.addColorStop(0, 'rgba(255,255,255,1)');
+cg.addColorStop(0.55, 'rgba(255,255,255,1)');
+cg.addColorStop(1, 'rgba(255,255,255,0)');
+cctx.fillStyle = cg;
+cctx.fillRect(0, 0, 64, 64);
 const puffs = new THREE.Points(eGeo, new THREE.PointsMaterial({
-  size: 0.1, map: particles.material.map, vertexColors: true,
-  transparent: true, depthWrite: false, toneMapped: false, // skip ACES so the colours stay vivid
+  size: 0.08, map: new THREE.CanvasTexture(core), vertexColors: true,
+  transparent: true, depthWrite: false,
+  toneMapped: false, fog: false, // skip ACES and the cream haze so the colours stay vivid
 }));
 puffs.frustumCulled = false;
 heroGroup.add(puffs);
@@ -183,7 +194,7 @@ function updatePuffs(dt, t) {
       ePos[i * 3 + a] += eVel[i * 3 + a] * dt + (a === 0 ? sway : 0);
     }
     const p = eAge[i] / eLife[i];
-    eCol[i * 4 + 3] = Math.min(p / 0.1, 1) * (1 - p) ** 1.5 * 0.7;
+    eCol[i * 4 + 3] = Math.min(p / 0.15, 1) * Math.min((1 - p) / 0.35, 1) * 0.9;
   }
   eGeo.attributes.position.needsUpdate = true;
   eGeo.attributes.color.needsUpdate = true;
