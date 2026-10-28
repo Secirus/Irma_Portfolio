@@ -13,7 +13,7 @@ addEventListener('pointermove', (e) => {
   mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
 });
 
-// ---------- Hero: noise-displaced iridescent blob + particles ----------
+// ---------- Hero: noise-displaced pearl blob + drifting pollen ----------
 
 // Ashima simplex noise (MIT)
 const noiseGLSL = /* glsl */`
@@ -42,11 +42,11 @@ float snoise(vec3 v){
 }`;
 
 const heroScene = new THREE.Scene();
-heroScene.fog = new THREE.FogExp2(0x05050a, 0.06);
+heroScene.fog = new THREE.FogExp2(0xf6f4ee, 0.07);
 const heroCam = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
 heroCam.position.set(0, 0, 6);
 
-const blobUniforms = { uTime: { value: 0 }, uIntensity: { value: 0.35 } };
+const blobUniforms = { uTime: { value: 0 }, uIntensity: { value: 0.22 } };
 const blob = new THREE.Mesh(
   new THREE.IcosahedronGeometry(1.4, 128),
   new THREE.ShaderMaterial({
@@ -56,8 +56,8 @@ const blob = new THREE.Mesh(
       varying float vDisp; varying vec3 vNormal; varying vec3 vView;
       ${noiseGLSL}
       void main(){
-        float n = snoise(position * 1.2 + uTime * 0.25);
-        n += 0.5 * snoise(position * 2.6 - uTime * 0.4);
+        float n = snoise(position * 1.0 + uTime * 0.12);
+        n += 0.35 * snoise(position * 2.2 - uTime * 0.18);
         vDisp = n;
         vec3 p = position + normal * n * uIntensity;
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
@@ -68,15 +68,19 @@ const blob = new THREE.Mesh(
     fragmentShader: /* glsl */`
       uniform float uTime;
       varying float vDisp; varying vec3 vNormal; varying vec3 vView;
-      vec3 palette(float t){
-        return vec3(.5) + vec3(.5) * cos(6.28318 * (vec3(1.) * t + vec3(.0, .33, .67)));
-      }
       void main(){
-        float fres = pow(1.0 - max(dot(normalize(vNormal), normalize(vView)), 0.0), 2.2);
-        vec3 col = palette(vDisp * 0.6 + fres * 0.8 + uTime * 0.05);
-        col = mix(col * 0.35, col, smoothstep(-0.6, 0.9, vDisp));
-        col += fres * vec3(0.4, 0.8, 1.0) * 1.2;
-        gl_FragColor = vec4(col, 1.0);
+        vec3 n = normalize(vNormal);
+        float fres = pow(1.0 - max(dot(n, normalize(vView)), 0.0), 2.0);
+        vec3 sage = vec3(.66, .75, .64), cream = vec3(.98, .96, .92);
+        vec3 blush = vec3(.94, .82, .78), sky = vec3(.82, .89, .90);
+        float t = vDisp * 0.5 + 0.5 + sin(uTime * 0.2) * 0.08;
+        vec3 col = mix(sage, cream, smoothstep(0.05, 0.75, t));
+        col = mix(col, blush, smoothstep(0.6, 1.0, t) * 0.7);
+        col = mix(col, sky, fres * 0.55);
+        float light = dot(n, normalize(vec3(-0.4, 0.8, 0.6))) * 0.5 + 0.5;
+        col *= 0.86 + 0.14 * light;
+        col += fres * 0.18;
+        gl_FragColor = vec4(min(col, 1.0), 1.0);
       }`,
   })
 );
@@ -84,34 +88,43 @@ const blob = new THREE.Mesh(
 const heroGroup = new THREE.Group();
 heroGroup.add(blob);
 
-// Orbiting wireframe rings
-const ringMat = new THREE.MeshBasicMaterial({ color: 0x7c5cff, wireframe: true, transparent: true, opacity: 0.25 });
+// Fine orbit lines
+const ringMat = new THREE.MeshBasicMaterial({ color: 0x7f9a80, transparent: true, opacity: 0.35 });
 const rings = [2.2, 2.6].map((r, i) => {
-  const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.01 + i * 0.005, 8, 160), ringMat);
+  const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.004, 6, 200), ringMat);
   m.rotation.x = Math.PI / 2.4 + i * 0.5;
   heroGroup.add(m);
   return m;
 });
 
-// Particle field
-const PCOUNT = 3000;
+// Pollen field: soft round motes in sage, blush and gold
+const PCOUNT = 900;
 const pPos = new Float32Array(PCOUNT * 3);
 const pCol = new Float32Array(PCOUNT * 3);
-const c1 = new THREE.Color(0x00e5ff), c2 = new THREE.Color(0xff3d9a), tmp = new THREE.Color();
+const tints = [0x9fb39f, 0xe2b7aa, 0xd9c48f, 0xffffff].map((c) => new THREE.Color(c));
 for (let i = 0; i < PCOUNT; i++) {
   const r = 3 + Math.random() * 12;
   const th = Math.random() * Math.PI * 2;
   const ph = Math.acos(2 * Math.random() - 1);
   pPos.set([r * Math.sin(ph) * Math.cos(th), r * Math.sin(ph) * Math.sin(th), r * Math.cos(ph)], i * 3);
-  tmp.copy(c1).lerp(c2, Math.random());
-  pCol.set([tmp.r, tmp.g, tmp.b], i * 3);
+  const c = tints[i % tints.length];
+  pCol.set([c.r, c.g, c.b], i * 3);
 }
 const pGeo = new THREE.BufferGeometry();
 pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
 pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+const dot = document.createElement('canvas');
+dot.width = dot.height = 64;
+const dctx = dot.getContext('2d');
+const dg = dctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+dg.addColorStop(0, 'rgba(255,255,255,1)');
+dg.addColorStop(0.4, 'rgba(255,255,255,0.6)');
+dg.addColorStop(1, 'rgba(255,255,255,0)');
+dctx.fillStyle = dg;
+dctx.fillRect(0, 0, 64, 64);
 const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
-  size: 0.04, vertexColors: true, transparent: true, opacity: 0.8,
-  blending: THREE.AdditiveBlending, depthWrite: false,
+  size: 0.09, map: new THREE.CanvasTexture(dot), vertexColors: true,
+  transparent: true, opacity: 0.75, depthWrite: false,
 }));
 
 heroScene.add(heroGroup, particles);
@@ -128,8 +141,8 @@ items.forEach((el) => {
     el.style.setProperty('--gx', `${x * 100}%`);
     el.style.setProperty('--gy', `${y * 100}%`);
     if (reduceMotion || el.classList.contains('compare')) return;
-    el.style.setProperty('--ry', `${(x - 0.5) * 6}deg`);
-    el.style.setProperty('--rx', `${(0.5 - y) * 6}deg`);
+    el.style.setProperty('--ry', `${(x - 0.5) * 3}deg`);
+    el.style.setProperty('--rx', `${(0.5 - y) * 3}deg`);
   });
   el.addEventListener('pointerleave', () => {
     el.style.removeProperty('--rx');
@@ -220,7 +233,7 @@ document.querySelectorAll('.tilt').forEach((el) => {
   el.addEventListener('pointermove', (e) => {
     const r = el.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-    el.style.transform = `rotateY(${(x - 0.5) * 16}deg) rotateX(${(0.5 - y) * 16}deg)`;
+    el.style.transform = `rotateY(${(x - 0.5) * 6}deg) rotateX(${(0.5 - y) * 6}deg)`;
     el.style.setProperty('--mx', `${x * 100}%`);
     el.style.setProperty('--my', `${y * 100}%`);
   });
@@ -273,16 +286,17 @@ function frame() {
 
   // Hero animation: blob drifts right and recedes as you scroll
   blobUniforms.uTime.value = t;
-  blobUniforms.uIntensity.value = 0.3 + Math.min(scroll, 1) * 0.25 + Math.abs(mouseSmooth.x) * 0.1;
+  blobUniforms.uIntensity.value = 0.2 + Math.min(scroll, 1) * 0.12 + Math.abs(mouseSmooth.x) * 0.05;
   const wide = w > 800;
   heroGroup.position.x = THREE.MathUtils.lerp(wide ? 1.8 : 0, wide ? 2.6 : 0, Math.min(scroll, 1));
-  heroGroup.position.y = (wide ? 0 : -1.2) + scroll * 0.8;
+  heroGroup.position.y = (wide ? 0 : -1.2) + scroll * 0.8 + Math.sin(t * 0.5) * 0.06;
   heroGroup.position.z = -Math.min(scroll, 3) * 1.2;
-  heroGroup.rotation.y = t * 0.15 + mouseSmooth.x * 0.5 + scroll * 1.5;
-  heroGroup.rotation.x = -mouseSmooth.y * 0.3;
-  rings[0].rotation.z = t * 0.3;
-  rings[1].rotation.z = -t * 0.2;
-  particles.rotation.y = t * 0.02 + scroll * 0.2;
+  heroGroup.rotation.y = t * 0.08 + mouseSmooth.x * 0.3 + scroll * 1.0;
+  heroGroup.rotation.x = -mouseSmooth.y * 0.2;
+  rings[0].rotation.z = t * 0.12;
+  rings[1].rotation.z = -t * 0.08;
+  particles.rotation.y = t * 0.012 + scroll * 0.15;
+  particles.position.y = Math.sin(t * 0.15) * 0.3 + scroll * 0.4;
   particles.rotation.x = scroll * 0.1;
   heroCam.position.x = mouseSmooth.x * 0.4;
   heroCam.position.y = mouseSmooth.y * 0.3;
@@ -290,7 +304,7 @@ function frame() {
 
   renderer.setScissorTest(false);
   renderer.setViewport(0, 0, w, h);
-  renderer.setClearColor(0x05050a);
+  renderer.setClearColor(0xf6f4ee);
   renderer.clear();
   renderer.render(heroScene, heroCam);
 
