@@ -83,11 +83,11 @@ const rings = [2.2, 2.6].map((r, i) => {
   return m;
 });
 
-// Pollen field: soft round motes in sage, blush and gold
+// Pollen field: soft round motes in the tulip's orange, coral, gold and cream
 const PCOUNT = 900;
 const pPos = new Float32Array(PCOUNT * 3);
 const pCol = new Float32Array(PCOUNT * 3);
-const tints = [0x9fb39f, 0xe2b7aa, 0xd9c48f, 0xffffff].map((c) => new THREE.Color(c));
+const tints = [0xe8a066, 0xd9705a, 0xe6c35c, 0xfff1dc].map((c) => new THREE.Color(c));
 for (let i = 0; i < PCOUNT; i++) {
   const r = 3 + Math.random() * 12;
   const th = Math.random() * Math.PI * 2;
