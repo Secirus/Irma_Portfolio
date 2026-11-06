@@ -392,8 +392,10 @@ function frame() {
   heroGroup.position.y = (wide ? 0 : -1.9) + scroll * 0.8 + Math.sin(t * 0.5) * 0.06;
   heroGroup.scale.setScalar(wide ? 1 : 0.6);
   heroGroup.position.z = -Math.min(scroll, 3) * 1.2;
-  heroGroup.rotation.y = mouseSmooth.x * 0.3 + scroll * 0.4;
-  flower.rotation.y = Math.sin(t * 0.2) * 0.5; // sway around the front; the back of the model is untidy
+  heroGroup.rotation.y = mouseSmooth.x * 0.3;
+  // Sway around the front (the back of the model is untidy); scrolling pushes the sway along
+  // in whichever direction it was already heading, but never past the same limits.
+  flower.rotation.y = Math.sin(t * 0.2 + scroll * 0.8) * 0.5;
   flower.scale.setScalar(THREE.MathUtils.lerp(flower.scale.x, bloom, 0.03));
   heroGroup.rotation.x = -mouseSmooth.y * 0.2;
   rings[0].rotation.z = t * 0.12;
