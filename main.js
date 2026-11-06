@@ -28,7 +28,7 @@ rim.position.set(4, 1, -3);
 heroScene.add(new THREE.HemisphereLight(0xfffaf2, 0xb7c4b4, 1.6), sun, rim);
 
 const heroGroup = new THREE.Group();
-const flower = new THREE.Group(); // tilted toward the camera, spun on its stem in the render loop
+const flower = new THREE.Group(); // tilted toward the camera, swayed on its stem in the render loop
 flower.rotation.x = 0.45;
 flower.scale.setScalar(0.001);
 heroGroup.add(flower);
@@ -393,7 +393,7 @@ function frame() {
   heroGroup.scale.setScalar(wide ? 1 : 0.6);
   heroGroup.position.z = -Math.min(scroll, 3) * 1.2;
   heroGroup.rotation.y = mouseSmooth.x * 0.3 + scroll * 0.4;
-  flower.rotation.y = t * 0.1;
+  flower.rotation.y = Math.sin(t * 0.2) * 0.5; // sway around the front; the back of the model is untidy
   flower.scale.setScalar(THREE.MathUtils.lerp(flower.scale.x, bloom, 0.03));
   heroGroup.rotation.x = -mouseSmooth.y * 0.2;
   rings[0].rotation.z = t * 0.12;
