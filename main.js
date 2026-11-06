@@ -392,6 +392,11 @@ function frame() {
   heroGroup.position.y = (wide ? 0 : -1.9) + scroll * 0.8 + Math.sin(t * 0.5) * 0.06;
   heroGroup.scale.setScalar(wide ? 1 : 0.6);
   heroGroup.position.z = -Math.min(scroll, 3) * 1.2;
+  // As the flower rises off the top of the screen the camera ends up looking at its underside,
+  // so tip it further toward the camera by however much it has climbed since the top of the page.
+  const baseY = wide ? 0 : -1.9;
+  const lift = Math.atan2(heroGroup.position.y - baseY, 6 - heroGroup.position.z);
+  flower.rotation.x = 0.45 + lift;
   heroGroup.rotation.y = mouseSmooth.x * 0.3;
   // Sway around the front (the back of the model is untidy); scrolling pushes the sway along
   // in whichever direction it was already heading, but never past the same limits.
