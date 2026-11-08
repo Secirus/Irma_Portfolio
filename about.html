@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About me — Irma Andersson</title>
+<meta name="description" content="About Irma Andersson, 3D artist creating elegant, otherworldly botanical and beauty renders.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=13">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<header class="nav">
+  <a href="index.html" class="logo">IA<span>.</span></a>
+  <nav>
+    <a href="portfolio.html" class="keep">Portfolio</a>
+    <a href="about.html" class="keep" aria-current="page">About me</a>
+    <a href="index.html#company">Company</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#contact" class="pill">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="section page-top about">
+    <div class="section-head">
+      <p class="mono eyebrow">About me</p>
+      <h1 class="page-title">Hi, I'm Irma.</h1>
+    </div>
+    <div class="about-body">
+      <!-- About me: write about yourself here. Each <p>…</p> is one paragraph. -->
+      <p>For eight years I've been building small, quiet worlds: water lilies at first light, dew on a snowdrop, a perfume bottle resting in folds of fabric. I'm drawn to the places where nature and beauty meet, and I care about light, texture and the tiny details that make an image feel real, then lift it somewhere a little more magical.</p>
+      <div class="about-links">
+        <a href="portfolio.html" class="btn ghost">See my work →</a>
+        <a href="index.html#contact" class="btn primary">Get in touch</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog class="lightbox" aria-label="Full-size view">
+  <button class="lb-close" aria-label="Close">×</button>
+  <button class="lb-nav lb-prev" aria-label="Previous">‹</button>
+  <div class="lb-stage"></div>
+  <button class="lb-nav lb-next" aria-label="Next">›</button>
+  <p class="lb-caption mono"></p>
+</dialog>
+
+<footer class="mono">© <span id="year"></span> Irma Andersson · Botanical &amp; beauty 3D</footer>
+
+<script type="module" src="main.js?v=24"></script>
+</body>
+</html>
