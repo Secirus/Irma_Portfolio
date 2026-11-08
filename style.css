@@ -1,8 +1,8 @@
 :root {
   color-scheme: only light; /* stop phone browsers from auto-recolouring the site in dark mode */
   --bg: #f6f4ee;
-  --fg: #26302a;
-  --muted: #3f6b4a;
+  --fg: #1e3b29;
+  --muted: #34613f;
   --line: rgba(38, 48, 42, 0.12);
   --card: #ebe8df;
   --a: #7f9a80;   /* sage */
@@ -19,7 +19,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--sans);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.65;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
