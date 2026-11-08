@@ -237,7 +237,21 @@ document.querySelectorAll('.compare').forEach((el) => {
   const input = el.querySelector('input');
   const set = (v) => el.style.setProperty('--pos', `${v}%`);
   input.addEventListener('input', () => set(input.value));
-  el.addEventListener('dblclick', () => openLightbox(items.indexOf(el)));
+  // A quick tap opens the full-size view; a drag moves the slider
+  let down = null;
+  input.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY, v: input.value }; });
+  input.addEventListener('pointerup', (e) => {
+    if (!down) return;
+    const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+    if (moved < 6) {
+      input.value = down.v; // undo the jump the tap caused
+      set(down.v);
+      openLightbox(items.indexOf(el));
+    }
+    down = null;
+  });
+  input.addEventListener('pointercancel', () => { down = null; });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); openLightbox(items.indexOf(el)); } });
   // One-time sweep when the slider first comes into view, to show it can be dragged
   if (reduceMotion) return;
   const hint = new IntersectionObserver(([e]) => {
@@ -297,6 +311,23 @@ function openLightbox(i) {
   if (video) {
     media = document.createElement('video');
     Object.assign(media, { src: video.src, controls: true, autoplay: true, loop: true, playsInline: true });
+  } else if (el.classList.contains('compare')) {
+    // Full-size version of the before/after slider, starting where the small one was left
+    const [before, after] = el.querySelectorAll('img');
+    const input = el.querySelector('input');
+    media = document.createElement('div');
+    media.className = 'lb-compare compare';
+    media.style.setProperty('--ar', el.style.getPropertyValue('--ar'));
+    media.style.setProperty('--pos', `${input.value}%`);
+    const big = (src, alt) => Object.assign(new Image(), { src, alt });
+    const wrap = document.createElement('div');
+    wrap.className = 'after';
+    wrap.append(big(after.src, ''));
+    const range = Object.assign(document.createElement('input'), { type: 'range', min: 0, max: 100, value: input.value });
+    range.setAttribute('aria-label', input.getAttribute('aria-label'));
+    range.addEventListener('input', () => media.style.setProperty('--pos', `${range.value}%`));
+    const handle = el.querySelector('.handle').cloneNode();
+    media.append(big(before.src, before.alt), wrap, range, handle, ...[...el.querySelectorAll('.tag')].map((t) => t.cloneNode(true)));
   } else {
     const img = el.querySelector('img');
     media = new Image();
@@ -321,7 +352,7 @@ lb.querySelector('.lb-close').addEventListener('click', () => lb.close());
 lb.addEventListener('click', (e) => { if (e.target === lb || e.target === stage) lb.close(); });
 lb.addEventListener('close', () => stage.replaceChildren());
 addEventListener('keydown', (e) => {
-  if (!lb.open) return;
+  if (!lb.open || e.target.type === 'range') return; // arrows move the slider instead
   if (e.key === 'ArrowLeft') openLightbox(current - 1);
   if (e.key === 'ArrowRight') openLightbox(current + 1);
 });
