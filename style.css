@@ -172,6 +172,9 @@ h3 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; letter-spac
 .about .section-head { margin-bottom: 0; }
 .about-body > p { font-family: var(--serif); font-size: clamp(1.3rem, 2vw, 1.65rem); line-height: 1.5; color: var(--fg); }
 .about-body > p + p { margin-top: 1em; }
+/* About me page: one column on the left, clear of the flower on the right */
+.about-me { grid-template-columns: minmax(0, min(600px, 52vw)); gap: 40px; }
+@media (max-width: 800px) { .about-me { grid-template-columns: minmax(0, 1fr); } }
 .about-links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 48px; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 48px; }
 .stats div { border-top: 1px solid var(--line); padding-top: 20px; }
