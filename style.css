@@ -70,10 +70,6 @@ h1 .line:nth-child(3) { animation-delay: .3s; }
 .btn.ghost { border: 1px solid var(--line); background: rgba(255,255,255,0.4); backdrop-filter: blur(6px); }
 .btn.ghost:hover { background: #fff; }
 .btn.large { font-family: var(--serif); font-size: clamp(1.1rem, 3vw, 1.9rem); padding: 18px clamp(20px, 6vw, 44px); max-width: 100%; margin-top: 48px; }
-.scroll-hint { position: absolute; bottom: 36px; left: clamp(16px, 6vw, 112px); color: var(--muted); display: flex; align-items: center; gap: 12px; }
-.scroll-hint span { width: 48px; height: 1px; background: var(--line); position: relative; overflow: hidden; }
-.scroll-hint span::after { content: ""; position: absolute; inset: 0; background: var(--a); animation: slide 2.6s ease-in-out infinite; }
-@keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 
 /* Marquee */
 
