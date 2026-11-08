@@ -1,7 +1,8 @@
 :root {
+  color-scheme: only light; /* stop phone browsers from auto-recolouring the site in dark mode */
   --bg: #f6f4ee;
   --fg: #26302a;
-  --muted: #4f6654;
+  --muted: #3f6b4a;
   --line: rgba(38, 48, 42, 0.12);
   --card: #ebe8df;
   --a: #7f9a80;   /* sage */
