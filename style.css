@@ -200,6 +200,7 @@ h3 { font-family: var(--serif); font-weight: 500; font-size: 1.5rem; letter-spac
 /* Contact */
 .contact { text-align: center; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 .big { font-size: clamp(2.8rem, 9vw, 7rem); line-height: 1; }
+.copy-email { margin-top: 14px; font: inherit; font-size: 0.95rem; color: var(--fg); cursor: pointer; }
 .socials { display: flex; gap: 32px; margin-top: 44px; flex-wrap: wrap; justify-content: center; }
 .socials a { color: var(--muted); border-bottom: 1px solid transparent; padding-bottom: 2px; transition: all .3s; }
 .socials a:hover { color: var(--fg); border-color: var(--a); }

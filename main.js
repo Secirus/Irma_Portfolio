@@ -391,6 +391,23 @@ function countUp(el) {
   requestAnimationFrame(step);
 }
 
+// Copy-email button: for visitors whose computer has no mail app set up for the mailto link
+document.querySelectorAll('.copy-email').forEach((btn) => {
+  const label = btn.textContent;
+  btn.addEventListener('click', async () => {
+    const email = btn.dataset.email;
+    try {
+      await navigator.clipboard.writeText(email);
+    } catch {
+      const t = Object.assign(document.createElement('textarea'), { value: email });
+      document.body.append(t); t.select(); document.execCommand('copy'); t.remove();
+    }
+    btn.textContent = 'Copied! ✓';
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => (btn.textContent = label), 2000);
+  });
+});
+
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // ---------- Render loop ----------
